@@ -24,7 +24,7 @@ class Accounts
 
     public override string ToString()
     {
-        return $"id: {Id}; name: {Name}; balance: {Balance}; type: {Type}";
+        return $"id:{Id};name:{Name};balance:{Balance};type:{Type}";
     }
 
 }

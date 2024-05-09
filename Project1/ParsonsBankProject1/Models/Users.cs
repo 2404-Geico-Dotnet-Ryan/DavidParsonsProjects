@@ -27,7 +27,7 @@ class Users
 
     public override string ToString()
     {
-        return $"id:{UserId}; userName: {UserName}; password: {Password}; firstName: {FirstName}; lastName: {LastName}";
+        return $"id:{UserId};userName:{UserName};password:{Password};firstName:{FirstName};lastName:{LastName}";
     }
 
 } 

@@ -124,8 +124,8 @@ class Program
 
         // Now that the info is collected into a Movie object, lets use the Movie Repo to add into our collection.
         // Reusing the movie variable to store the updated values if any from the add movie process
-        customer = cust.AddCustomer(customer);
-        account = acc.AddAccount(account);
+        cust.AddCustomer(customer);
+        acc.AddAccount(account);
 
         // For the sake of clarity to the user of the app lets inform them of the newly added movie.
 

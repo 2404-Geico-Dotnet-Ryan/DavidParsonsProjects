@@ -90,7 +90,7 @@ class PBRepo
     }
 
     // Delete
-    public Users? DeleteMovie(Users cust)
+    public Users? DeleteUser(Users cust)
     {
         //If we have the id - remove it from storage
         bool didRemove = bankingStorage.CustomerDirectory.Remove(cust.UserId);
@@ -106,7 +106,7 @@ class PBRepo
         }
     }
 
-    public Accounts? DeleteMovie(Accounts acc)
+    public Accounts? DeleteAccount(Accounts acc)
     {
         //If we have the id - remove it from storage
         bool didRemove = bankingStorage.AccountDirectory.Remove(acc.Id);
@@ -120,6 +120,23 @@ class PBRepo
             System.Console.WriteLine("Invalid Account Id: Please Try Again");
             return null;
         }
+    }
+
+    public Users? LoginCustomer(Users cust)
+    {
+        System.Console.WriteLine("Please enter your User Name below: ");
+        string input = Console.ReadLine() ?? "";
+        // if (input == bankingStorage.CustomerDirectory.ContainsValue(cust.UserName))
+        // {
+
+        // }
+        // else
+        // {
+        //     System.Console.WriteLine("Invalid User Name, Please Try Again");
+        //     return null;
+        // }
+
+        return cust;
     }
 
 }

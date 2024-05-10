@@ -7,7 +7,7 @@ class Users
     public string LastName { get; set; }
 
 
-    public Users()
+    public Users(Guid newUserId)
     {
         UserName = "";
         Password = "";

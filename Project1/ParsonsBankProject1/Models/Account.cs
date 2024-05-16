@@ -1,32 +1,34 @@
-class Accounts
+class Account
 {
     public int Id { get; set; }
     public string AccountName { get; set; }
     public double Balance { get; set; }
     public string AccountType { get; set; }
-    public int UserId { get; set; }
+
+    // User relationship - who owns the Account
+    public User? Owner { get; set; }
 
 
-    public Accounts()
+    public Account(int v)
     {
         AccountName = "";
         AccountType = "";
     }
 
-    public Accounts(int id, string accountName, double balance, string accountType, int userId)
+    public Account(int id, string accountName, double balance, string accountType, User? owner)
     {
         Id = id;
         AccountName = accountName;
         Balance = balance;
         AccountType = accountType;
-        UserId = userId;
+        Owner = owner;
     }
 
 
 
     public override string ToString()
     {
-        return $"id:{Id};name:{AccountName};balance:{Balance};type:{AccountType};userId:{UserId}";
+        return $"id:{Id};name:'{AccountName}';balance:{Balance};type:'{AccountType}';owner:'{Owner?.UserId}'"; 
     }
 
 }

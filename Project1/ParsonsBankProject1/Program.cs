@@ -1,205 +1,251 @@
-﻿namespace ParsonsBankProject1;
+﻿using System.Diagnostics.SymbolStore;
+using Microsoft.Win32.SafeHandles;
+
+namespace ParsonsBankProject1;
 
 class Program
 {
+    static AccountServices aS = new();
+    static UserService uS = new();
+    static User? currentUser = null;
+
     static void Main(string[] args)
     {
-        PBRepo acc = new();
-        PBRepo cust = new();
-        String[] menuOptions = ["[1] View Account Balance", "[2] Make a Deposit", "[3] Make a Withdrawal", "[0] Log Out"];
 
+        System.Console.WriteLine();
         System.Console.WriteLine("||||||||||||||||||||||||||||||||||||");
         System.Console.WriteLine("|     Welcome to Parsons Bank!     |");
         System.Console.WriteLine("||||||||||||||||||||||||||||||||||||");
         System.Console.WriteLine();
+
         Thread.Sleep(1000);
-        System.Console.WriteLine("Do you currently have an account with us? Y/N");
-        var input = Console.ReadLine() ?? "";
-        // if (input.ToLower() == "y")
-        // {
-        //     //Send to the login page
-        //     bool loginSuccessful = false;
-        //     LogInToAccount();
 
-        //     if(loginSuccessful)
-        //     {
-        //         MainMenu(menuOptions, acc);
-        //     }
-        //     else
-        //     {
-        //         ExitApplication();
-        //     }
-        // }
-        // else
-        // {
-        //     //time to create an account - keep it simple - 
-        //     CreateAnAccount(cust, acc);
+        // EnterApp(userSer, accSer, acc);
 
-        //     MainMenu(menuOptions, acc);
-        // }
+        Thread.Sleep(1000);
 
-        MainMenu(menuOptions, acc);
+        MainMenu();
     }
 
-    private static void MainMenu(string[] menuOptions, PBRepo acc)
+    // // private static void EnterApp(UserService userSer, AccountServices accSer, AccountRepo acc)
+    // {
+    //     // Need code block
+    // }
+
+    // private static void MainLoginMenu(UserService userSer)
+    // {
+    //     bool keepGoing = true;
+    //     while (keepGoing)
+    //     {
+    //         System.Console.WriteLine("Please select which option applies below: ");
+    //         System.Console.WriteLine("=================================");
+    //         System.Console.WriteLine("[1] New Customer: Create new account");
+    //         System.Console.WriteLine("[2] Existing Customer: Login");
+    //         System.Console.WriteLine("[0] Exit");
+    //         System.Console.WriteLine("=================================");
+
+    //         int input = int.Parse(Console.ReadLine() ?? "0");
+    //         //Same Validation method copied over
+    //         input = ValidateSelection(input, 2);
+
+    //         //Extracted to method - uses switch case to determine what to do next.
+    //         keepGoing = DecideNextOptionOne(userSer, input);
+    //     }
+    // }
+
+    // private static bool DecideNextOptionOne(UserService userSer, int input)
+    // {
+    //     switch (input)
+    //     {
+    //         case 1:
+    //             {
+    //                 CreateAnAccount();
+    //                 break;
+    //             }
+    //         case 2:
+    //             {
+    //                 LoginToAccount(userSer);
+    //                 break;
+    //             }
+    //         case 0:
+    //         default:
+    //             {
+    //                 //If option 0 or anything else -> set keepGoing to false.
+    //                 return false;
+    //             }
+    //     }
+
+    //     return true;
+    // }
+
+    private static void MainMenu()
     {
         //Something that happens after login or account is created - go to Main Menu
         bool keepGoing = true;
         while (keepGoing)
         {
-        System.Console.WriteLine();
-        System.Console.WriteLine("Please select which action you would like to take: ");
-        Thread.Sleep(1000);
-        for (int i = 0; i < menuOptions.Count(); i++)
-        {
-            System.Console.WriteLine($"{i + 1} {menuOptions[i]}");
+            System.Console.WriteLine("Please select which option applies below: ");
+            System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.Console.WriteLine("[1] View Account Balance");
+            System.Console.WriteLine("[2] Make a Deposit");
+            System.Console.WriteLine("[3] Make a Withdrawal");
+            System.Console.WriteLine("[4] Delete Account");
+            System.Console.WriteLine("[0] Exit");
+            System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+            int input = int.Parse(Console.ReadLine() ?? "0");
+            //Same Validation method copied over
+            input = ValidateSelection(input, 4);
+
+            //Extracted to method - uses switch case to determine what to do next.
+            keepGoing = DecideNextOptionTwo(input);
         }
+    }
 
-        
-
-        var selections = Convert.ToInt32(Console.ReadLine());
-        
-        switch (selections)
+    private static bool DecideNextOptionTwo(int input)
+    {
+        switch (input)
         {
             case 1:
-                ViewAccountBalance(acc);
+                ViewAccountBalance();
                 break;
             case 2:
-                DepositMoney(acc);
+                DepositMoney();
                 break;
             case 3:
-                WithdrawalMoney(acc);
+                WithdrawalMoney();
+                break;
+            case 4:
+                DeletingAccount();
                 break;
             case 0:
                 LogOut();
                 break;
         }
 
-        selections = ValidateSelection(selections, 3);
-
-        }
-        // do I need more here - next steps?
+        return true;
     }
 
-    public static void LogInToAccount()
-    {
-        // Need to create code block for a customer to log into the Bank Account
-        System.Console.WriteLine("Please enter your User Name below: ");
-        string input = Console.ReadLine() ?? "";
-        
+    // private static void LoginToAccount(UserService userSer)
+    // {
+    //     // Need to create code block for a customer to log into the Bank Account
+    //     System.Console.WriteLine("Please log into your account");
+    //     System.Console.WriteLine("Username:");
+    //     string username = Console.ReadLine() ?? "";
+    //     System.Console.WriteLine("Password:");
+    //     string password = Console.ReadLine() ?? "";
 
-    }
+    //     userSer.Login(username, password);
 
-    public static PBRepo CreateAnAccount(PBRepo cust, PBRepo acc)
-    {
-        // Need to create code block for a customer to create an account
-        System.Console.WriteLine("Let's create a new account!");
-        System.Console.WriteLine("Please provide your First Name");
-        string firstName = Console.ReadLine() ?? "";
+    //     System.Console.WriteLine("Login Successful");;
+    // }
 
-        System.Console.WriteLine("Please provide your Last Name");
-        string lastName = Console.ReadLine() ?? "";
+    // private static void CreateAnAccount()
+    // {
+    //     // Need to create code block for a customer to create an account
+    //     System.Console.WriteLine("Let's create a new account!");
+    //     System.Console.WriteLine("Please provide your First Name");
+    //     string firstName = Console.ReadLine() ?? "";
 
-        System.Console.WriteLine("What would you like your username to be?");
-        string userName = Console.ReadLine() ?? "";
+    //     System.Console.WriteLine("Please provide your Last Name");
+    //     string lastName = Console.ReadLine() ?? "";
 
-        System.Console.WriteLine("Please provide a password");
-        string password = Console.ReadLine() ?? "";
+    //     System.Console.WriteLine("What would you like your username to be?");
+    //     string userName = Console.ReadLine() ?? "";
 
-        System.Console.WriteLine("What would you like the name of your account to be?");
-        string accountName = Console.ReadLine() ?? "";
+    //     System.Console.WriteLine("Please provide a password");
+    //     string password = Console.ReadLine() ?? "";
 
-        System.Console.WriteLine("What type of account would you like to open? (Checking/Savings)");
-        string accountType = Console.ReadLine() ?? "";
+    //     System.Console.WriteLine("What would you like the name of your account to be?");
+    //     string accountName = Console.ReadLine() ?? "";
 
-        System.Console.WriteLine("Please enter the $ amount you would like to add to your new account!");
-        double balance = double.Parse(Console.ReadLine() ?? "0");
+    //     System.Console.WriteLine("What type of account would you like to open? (Checking/Savings)");
+    //     string accountType = Console.ReadLine() ?? "";
 
-        // Lets just assume that the available will default to true and by extension the returnDate will be 0.
-        // Also not going to ask for id - because our movie repo already gives it the next correct value for id.
-        // Now we need to collect all this info into a new movie object
+    //     System.Console.WriteLine("Please enter the $ amount you would like to add to your new account!");
+    //     double balance = double.Parse(Console.ReadLine() ?? "0");
 
-        Users customer = new(0, userName, password, firstName, lastName);
-        Accounts account = new(0, accountName, balance, accountType, customer.UserId);
+    //     // Lets just assume that the available will default to true and by extension the returnDate will be 0.
+    //     // Also not going to ask for id - because our movie repo already gives it the next correct value for id.
+    //     // Now we need to collect all this info into a new movie object
 
-        // Now that the info is collected into a Movie object, lets use the Movie Repo to add into our collection.
-        // Reusing the movie variable to store the updated values if any from the add movie process
-        cust.AddCustomer(customer);
-        acc.AddAccount(account);
+    //     User owner = new(0, userName, password, firstName, lastName, "user");
+    //     Account account = new(0, accountName, balance, accountType, owner);
 
-        // For the sake of clarity to the user of the app lets inform them of the newly added movie.
+    //     // Now that the info is collected into a Movie object, lets use the Movie Repo to add into our collection.
+    //     // Reusing the movie variable to store the updated values if any from the add movie process
 
-        System.Console.WriteLine("Newly Added Account: " + acc);
+    //     // For the sake of clarity to the user of the app lets inform them of the newly added movie.
 
-        return acc;
-    }
+    //     System.Console.WriteLine("Newly Added Account: " + account);
+    // }
 
-    public static PBRepo ViewAccountBalance(PBRepo acc)
+    private static void ViewAccountBalance()
     {
         // Need to create code block to view existing $$ amount in account
-        Accounts retrievedAccount = PromptUserForAccount(acc);
+        Account? retrievedAccount = PromptUserForAccount();
         double accountBalance = retrievedAccount.Balance;
 
         System.Console.WriteLine("Account Balance: " + accountBalance);
         System.Console.WriteLine();
-
-        return acc;
     }
 
-    public static PBRepo DepositMoney(PBRepo acc)
+    private static void DepositMoney()
     {
         // Need to create code block to add a $$ amount to existing balance
-        Accounts retrievedAccount = PromptUserForAccount(acc);
-        double accountBalance = retrievedAccount.Balance;
+        Account? account = PromptUserForAccount();
+        if (account == null) return;
 
-        System.Console.WriteLine("Please enter the amount your would like to deposit into your account: " + retrievedAccount.AccountName);
+        System.Console.WriteLine("Please enter the amount your would like to deposit into your account: " + account.AccountName);
         double deposit = double.Parse(Console.ReadLine() ?? "0");
+        
+        double accountBalance = aS.MakeDeposit(account, deposit);
 
-        accountBalance += deposit;
         // double newAccountBalance = accountBalance + deposit; // Initally had this before the line above.
 
-        System.Console.WriteLine("The new balance for " + retrievedAccount.AccountName + " is: " + accountBalance);
+        System.Console.WriteLine("The new balance for " + account.AccountName + " is: " + accountBalance);
         System.Console.WriteLine();
-
-        return acc;
     }
 
-    public static PBRepo WithdrawalMoney(PBRepo acc)
+    private static void WithdrawalMoney()
     {
         // Need to create code block to remove $$ from existing balance
-        Accounts retrievedAccount = PromptUserForAccount(acc);
-        double accountBalance = retrievedAccount.Balance;
+        Account? account = PromptUserForAccount();
+        if (account == null) return;
 
-        System.Console.WriteLine("Please enter the amount your would like to deposit into your account: " + retrievedAccount.AccountName);
-        double deposit = double.Parse(Console.ReadLine() ?? "0");
+        System.Console.WriteLine("Please enter the amount your would like to withdrawal from your account: " + account.AccountName);
+        double withdrawal = double.Parse(Console.ReadLine() ?? "0");
 
-        double newAccountBalance = accountBalance + deposit;
+        double accountBalance = aS.MakeWithdrawal(account, withdrawal);
 
-        System.Console.WriteLine("The new balance for " + retrievedAccount.AccountName + " is: " + newAccountBalance);
+        System.Console.WriteLine("The new balance for " + account.AccountName + " is: " + accountBalance);
         System.Console.WriteLine();
-
-        return acc;
     }
 
-    public static void LogOut()
+    private static void DeletingAccount()
+    {
+        Account? account = PromptUserForAccount();
+
+        account = aS.DeleteAccount(account);
+
+        System.Console.WriteLine("Deleted Account: " + account);
+    }
+
+    private static void LogOut()
     {
         System.Console.WriteLine("Thanks for stopping by!");
     }
 
-    public static void ExitApplication()
+    private static Account? PromptUserForAccount()
     {
-        // Need code block to Exit Application
-    }
-
-    private static Accounts PromptUserForAccount(PBRepo acc)
-    {
-        Accounts? retrievedAccount = null;
+        Account? retrievedAccount = null;
         while (retrievedAccount == null)
         {
             System.Console.WriteLine("Lets find the your Account!");
             System.Console.WriteLine("Please enter an account id: ");
-            int input = int.Parse(Console.ReadLine() ?? "0");
-            retrievedAccount = acc.GetAccount(input);
+            int id = int.Parse(Console.ReadLine() ?? "0");
+            if (id == 0) return null;
+            retrievedAccount = aS.RetrieveAccount(id);
         }
         return retrievedAccount;
     }

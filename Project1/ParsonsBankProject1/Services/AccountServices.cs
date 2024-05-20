@@ -4,8 +4,6 @@ class AccountServices
 {  
     /*
         Service:
-            - Create User
-            - Create Account
             - Check Account Balance
             - Deposite Money into Account
             - Withdrawal Money from Account
@@ -49,18 +47,5 @@ class AccountServices
     public Account? DeleteAccount(Account account)
     {
         return bankr.DeleteAccount(account);
-    }
-
-    public static Account PromptUserForAccount(AccountRepo acc)
-    {
-        Account? retrievedAccount = null;
-        while (retrievedAccount == null)
-        {
-            System.Console.WriteLine("Lets find the your Account!");
-            System.Console.WriteLine("Please enter an account id: ");
-            int input = int.Parse(Console.ReadLine() ?? "0");
-            retrievedAccount = acc.GetAccount(input);
-        }
-        return retrievedAccount;
     }
 }

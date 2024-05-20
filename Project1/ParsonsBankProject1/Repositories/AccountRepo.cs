@@ -19,7 +19,7 @@ class AccountRepo
     {
         acc.Id = accountStorage.idCounter++;
 
-        accountStorage.AccountDirectory.Add(acc.Id, acc);
+        accountStorage.accountDirectory.Add(acc.Id, acc);
 
         return acc;
     }
@@ -27,9 +27,9 @@ class AccountRepo
     // Read
     public Account? GetAccount(int id)
     {
-        if(accountStorage.AccountDirectory.ContainsKey(id))
+        if(accountStorage.accountDirectory.ContainsKey(id))
         {
-            return accountStorage.AccountDirectory[id];    
+            return accountStorage.accountDirectory[id];    
         }
         else
         {
@@ -42,7 +42,7 @@ class AccountRepo
     {
         //I am chooseing to return a List because that is a much more common collection to
         //work with. It does mean I have to do a little bit of work here - but its not bad.
-        return accountStorage.AccountDirectory.Values.ToList();
+        return accountStorage.accountDirectory.Values.ToList();
     }
 
     // Update
@@ -50,7 +50,7 @@ class AccountRepo
     {
         try
         {
-            accountStorage.AccountDirectory[acc.Id] = acc;
+            accountStorage.accountDirectory[acc.Id] = acc;
             return acc;
         }
         catch (Exception)
@@ -64,7 +64,7 @@ class AccountRepo
     public Account? DeleteAccount(Account account)
     {
         //If we have the id - remove it from storage
-        bool didRemove = accountStorage.AccountDirectory.Remove(account.Id);
+        bool didRemove = accountStorage.accountDirectory.Remove(account.Id);
 
         if (didRemove)
         {

@@ -1,29 +1,30 @@
-CREATE TABLE Customer (
-	Id int,
-	Username varchar(50),
-	Password varchar(50),
-	FirstName varchar(50),
-	LastName varchar(50),
-	Role varchar(50),
+CREATE TABLE [User] (
+	UserId INT IDENTITY(1, 1) PRIMARY KEY,
+	Username VARCHAR(50) UNIQUE NOT NULL,
+	Password VARCHAR(50) NOT NULL,
+	FirstName VARCHAR(50) NOT NULL,
+	LastName VARCHAR(50) NOT NULL,
+	Role VARCHAR(50) NOT NULL,
 );
 
 CREATE TABLE Account (
-	Id int,
-	AccountName varchar(50),
-	Balance decimal(22, 2),
-	AccountType varchar(50),
-	OwnerId int,
+	Id INT IDENTITY(1000, 1) PRIMARY KEY,
+	AccountName VARCHAR(50) NOT NULL,
+	Balance DECIMAL(22,2) NOT NULL,
+	AccountType VARCHAR(50) NOT NULL,
+	UserId INT FOREIGN KEY REFERENCES [User](UserId),
 );
 
-INSERT INTO Customer VALUES 
-(1, 'user1', '12345', 'John', 'Johnson', 'user'),
-(2, 'user2', '123456', 'Sara', 'Reed', 'user'),
-(3, 'user3', '1234567', 'Bailey', 'Mae', 'user'),
-(4, 'user4', '12345678', 'Adam', 'Strong', 'user'),
-(5, 'admin', '11111', 'admin', 'admin', 'admin');
+INSERT INTO [User] (Username, Password, FirstName, LastName, Role) VALUES 
+('user1', '12345', 'John', 'Johnson', 'user'),
+('user2', '123456', 'Sara', 'Reed', 'user'),
+('user3', '1234567', 'Bailey', 'Mae', 'user'),
+('user4', '12345678', 'Adam', 'Strong', 'user'),
+('admin', '11111', 'admin', 'admin', 'admin');
 
-INSERT INTO Account VALUES 
-(1, 'JJohnsonChecking', 10000.99, 'Checking', 1),
-(2, 'SaraSavings', 550.00, 'Saving', 2),
-(3, 'MaeAccount', 5000.90, 'Checking', 3),
-(4, 'AdamsChecking', 25000.00, 'Checking', 4);
+
+INSERT INTO Account (AccountName, Balance, AccountType, UserId) VALUES 
+('JJohnsonChecking', 10000.99, 'Checking', 1),
+('SaraSavings', 550.00, 'Saving', 2),
+('MaeAccount', 5000.90, 'Checking', 3),
+('AdamsChecking', 25000.00, 'Checking', 4);

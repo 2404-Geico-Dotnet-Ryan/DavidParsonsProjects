@@ -19,7 +19,7 @@ class UserRepo
     {
         user.UserId = userStorage.userIdCounter++;
 
-        userStorage.CustomerDirectory.Add(user.UserId, user);
+        userStorage.customerDirectory.Add(user.UserId, user);
 
         return user;
     }
@@ -27,9 +27,9 @@ class UserRepo
     // Read
     public User? GetUser(int userId)
     {
-        if(userStorage.CustomerDirectory.ContainsKey(userId))
+        if(userStorage.customerDirectory.ContainsKey(userId))
         {
-            return userStorage.CustomerDirectory[userId];    
+            return userStorage.customerDirectory[userId];    
         }
         else
         {
@@ -42,7 +42,7 @@ class UserRepo
     {
         //I am chooseing to return a List because that is a much more common collection to
         //work with. It does mean I have to do a little bit of work here - but its not bad.
-        return userStorage.CustomerDirectory.Values.ToList();
+        return userStorage.customerDirectory.Values.ToList();
     }
 
     // Update
@@ -50,7 +50,7 @@ class UserRepo
     {
         try
         {
-            userStorage.CustomerDirectory[user.UserId] = user;
+            userStorage.customerDirectory[user.UserId] = user;
             return user;
         }
         catch (Exception)
@@ -64,7 +64,7 @@ class UserRepo
     public User? DeleteUser(User user)
     {
         //If we have the id - remove it from storage
-        bool didRemove = userStorage.CustomerDirectory.Remove(user.UserId);
+        bool didRemove = userStorage.customerDirectory.Remove(user.UserId);
 
         if (didRemove)
         {

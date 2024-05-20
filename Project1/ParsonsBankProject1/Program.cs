@@ -6,12 +6,19 @@ namespace ParsonsBankProject1;
 
 class Program
 {
-    static AccountServices aS = new();
-    static UserService uS = new();
+    static AccountServices aS;
+    static UserService us;
     static User? currentUser = null;
 
     static void Main(string[] args)
     {
+        string path = @"C:\Users\U30A97\RevatureBootcamp\DavidParsonsProjects\Project1\ParsonsBankProject1\ParsonsBankingApp-DB.txt"; // Can also add and @ in front of the string "" to allow the single backslash.
+        string connectionString = File.ReadAllText(path);
+
+        // System.Console.WriteLine(connectionString); // Remove later
+
+        UserRepo ur = new(connectionString);
+        us = new(ur);
 
         System.Console.WriteLine();
         System.Console.WriteLine("||||||||||||||||||||||||||||||||||||");
@@ -21,23 +28,23 @@ class Program
 
         Thread.Sleep(1000);
 
-        MainLoginMenu(uS);
+        MainLoginMenu();
 
         Thread.Sleep(1000);
 
         MainMenu();
     }
 
-    private static void MainLoginMenu(UserService uS)
+    private static void MainLoginMenu()
     {
         while (true)
         {
             System.Console.WriteLine("Please select which option applies below: ");
-            System.Console.WriteLine("=================================");
+            System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             System.Console.WriteLine("[1] New Customer: Create new account");
             System.Console.WriteLine("[2] Existing Customer: Login");
             System.Console.WriteLine("[0] Exit");
-            System.Console.WriteLine("=================================");
+            System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
             int input = int.Parse(Console.ReadLine() ?? "0");
             //Same Validation method copied over
@@ -52,13 +59,14 @@ class Program
                 }
             case 2:
                 {
-                    LoginToAccount(uS);
+                    LoginToAccount();
                     return;
                 }
             case 0:
                 {
                     System.Console.WriteLine("Thanks for stopping by!");
-                    return;
+                    Environment.Exit(0);
+                    break;
                 }
             default:
                 {
@@ -133,7 +141,8 @@ class Program
                     break;
                 case 0:
                     System.Console.WriteLine("Logged out, thanks for stopping by!");
-                    return;
+                    Environment.Exit(0);
+                    break;
                 default:
                     System.Console.WriteLine("Invalid choice, please try again");
                     break;
@@ -168,7 +177,7 @@ class Program
     //     return true;
     // }
 
-    private static void LoginToAccount(UserService uS)
+    private static void LoginToAccount()
     {
         // Need to create code block for a customer to log into the Bank Account
         System.Console.WriteLine("Please log into your account");
@@ -177,7 +186,7 @@ class Program
         System.Console.WriteLine("Password:");
         string password = Console.ReadLine() ?? "";
 
-        uS.Login(username, password);
+        us.Login(username, password);
 
         System.Console.WriteLine("Login Successful");;
     }

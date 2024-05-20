@@ -1,6 +1,11 @@
 class UserService
 {
-    UserRepo ur = new();
+    UserRepo ur;
+
+    public UserService(UserRepo ur)
+    {
+        this.ur = ur;
+    }
 
     public User? CreateUserAccount(User user)
     {

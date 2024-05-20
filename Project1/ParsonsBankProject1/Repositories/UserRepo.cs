@@ -1,61 +1,160 @@
+using Microsoft.Data.SqlClient;
+
 class UserRepo
 {
-    /*
-    This class is in the Data Access / Repository Layer of our application.
-    So it is solely responsible for any data access and management centered around our Movie Object.
+    private readonly string _connectDatabase;
 
-    4 Major Operations we'd like to manage in this location.
-        - CRUD Operations
-            - C - Create
-            - R - Read
-            - U - Update
-            - D - Delete
-    */
-
-    UserStorage userStorage = new();
+    public UserRepo(string connectionString)
+    {
+        _connectDatabase = connectionString;
+    }
 
     // Create
     public User AddUser(User user)
     {
-        user.UserId = userStorage.userIdCounter++;
+        using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
+        connection.Open();
 
-        userStorage.customerDirectory.Add(user.UserId, user);
+        // Create the SQL String
+        string sql = "INSERT INTO dbo.[User] OUTPUT INSERTED.* VALUES (@Username, @Password, @FirstName, @LastName, @Role)"; // The "Output inserted.*" will return the values
 
-        return user;
+        // Set up SqlCommand Command object and use its methods to modify the parameterized values
+        SqlCommand cmd = new(sql, connection);
+        cmd.Parameters.AddWithValue("@Username", user.Username);
+        cmd.Parameters.AddWithValue("@Password", user.Password);
+        cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
+        cmd.Parameters.AddWithValue("@LastName", user.LastName);
+        cmd.Parameters.AddWithValue("@Role", user.Role);
+
+        //Execute the query
+        // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
+        using SqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
+        {
+            // If Read() found data - > then extract it
+            User newUser = new();
+            newUser.UserId = (int) reader["UserId"];
+            newUser.Username = (string) reader["Username"];
+            newUser.Password = (string) reader["Password"];
+            newUser.Password = (string) reader["FirstName"];
+            newUser.Password = (string) reader["LastName"];
+            newUser.Role = (string) reader["Role"];
+            return newUser;
+        }
+        else
+        {
+            // Else Read() found nothing -> Insert Failed.
+            return null;
+        }
     }
 
     // Read
     public User? GetUser(int userId)
     {
-        if(userStorage.customerDirectory.ContainsKey(userId))
+        using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
+        connection.Open();
+
+        // Create the SQL String
+        string sql = "SELECT * FROM dbo.[User] OUTPUT INSERTED.* WHERE Id = (@UserId)"; // The "Output inserted.*" will return the values
+
+        // Set up SqlCommand Command object and use its methods to modify the parameterized values
+        SqlCommand cmd = new(sql, connection);
+        cmd.Parameters.AddWithValue("@UserId", userId);
+
+        //Execute the query
+        // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
+        using SqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
         {
-            return userStorage.customerDirectory[userId];    
+            // If Read() found data - > then extract it
+            User retrievedUser = new();
+            retrievedUser.UserId = (int) reader["UserId"];
+            retrievedUser.Username = (string) reader["Username"];
+            retrievedUser.Password = (string) reader["Password"];
+            retrievedUser.Password = (string) reader["FirstName"];
+            retrievedUser.Password = (string) reader["LastName"];
+            retrievedUser.Role = (string) reader["Role"];
+            return retrievedUser;
         }
         else
         {
-            System.Console.WriteLine("Invalid Customer Id - Please Try Again");
+            // Else Read() found nothing -> Insert Failed.
             return null;
         }
     }
 
     public List<User> GetAllUsers()
     {
-        //I am chooseing to return a List because that is a much more common collection to
-        //work with. It does mean I have to do a little bit of work here - but its not bad.
-        return userStorage.customerDirectory.Values.ToList();
+        using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
+        connection.Open();
+
+        // Create the SQL String
+        string sql = "SELECT * FROM dbo.[User] OUTPUT INSERTED.*"; // The "Output inserted.*" will return the values
+
+        // Set up SqlCommand Command object and use its methods to modify the parameterized values
+        SqlCommand cmd = new(sql, connection);
+
+        //Execute the query
+        // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
+        using SqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
+        {
+            // If Read() found data - > then extract it
+            User retrievedUser = new();
+            retrievedUser.UserId = (int) reader["UserId"];
+            retrievedUser.Username = (string) reader["Username"];
+            retrievedUser.Password = (string) reader["Password"];
+            retrievedUser.Password = (string) reader["FirstName"];
+            retrievedUser.Password = (string) reader["LastName"];
+            retrievedUser.Role = (string) reader["Role"];
+            return null;
+        }
+        else
+        {
+            // Else Read() found nothing -> Insert Failed.
+            return null;
+        }
     }
 
     // Update
     public User? UpdateUser(User user)
     {
-        try
+        using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
+        connection.Open();
+
+        // Create the SQL String
+        string sql = "UPDATE dbo.[User] OUTPUT INSERTED.* SET (@Username, @Password, @Role)"; // The "Output inserted.*" will return the values
+
+         // Set up SqlCommand Command object and use its methods to modify the parameterized values
+        SqlCommand cmd = new(sql, connection);
+        cmd.Parameters.AddWithValue("@Username", user.Username);
+        cmd.Parameters.AddWithValue("@Password", user.Password);
+        cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
+        cmd.Parameters.AddWithValue("@LastName", user.LastName);
+        cmd.Parameters.AddWithValue("@Role", user.Role);
+
+        //Execute the query
+        // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
+        using SqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
         {
-            userStorage.customerDirectory[user.UserId] = user;
-            return user;
+            // If Read() found data - > then extract it
+            User updatedUser = new();
+            updatedUser.UserId = (int) reader["UserId"];
+            updatedUser.Username = (string) reader["Username"];
+            updatedUser.Password = (string) reader["Password"];
+            updatedUser.Password = (string) reader["FirstName"];
+            updatedUser.Password = (string) reader["LastName"];
+            updatedUser.Role = (string) reader["Role"];
+            return updatedUser;
         }
-        catch (Exception)
+        else
         {
-            System.Console.WriteLine("Invalid Customer Id - Please Try Again");
+            // Else Read() found nothing -> Insert Failed.
             return null;
         }
     }
@@ -63,16 +162,35 @@ class UserRepo
     // Delete
     public User? DeleteUser(User user)
     {
-        //If we have the id - remove it from storage
-        bool didRemove = userStorage.customerDirectory.Remove(user.UserId);
+        using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
+        connection.Open();
 
-        if (didRemove)
+        // Create the SQL String
+        string sql = "DELETE FROM dbo.[User] OUTPUT INSERTED.* WHERE Id = (@Id)"; // The "Output inserted.*" will return the values
+
+         // Set up SqlCommand Command object and use its methods to modify the parameterized values
+        SqlCommand cmd = new(sql, connection);
+        cmd.Parameters.AddWithValue("@Id", user.UserId);
+
+        //Execute the query
+        // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
+        using SqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
         {
-            return user;
-        }    
+            // If Read() found data - > then extract it
+            User deletedUser = new();
+            deletedUser.UserId = (int) reader["UserId"];
+            deletedUser.Username = (string) reader["Username"];
+            deletedUser.Password = (string) reader["Password"];
+            deletedUser.Password = (string) reader["FirstName"];
+            deletedUser.Password = (string) reader["LastName"];
+            deletedUser.Role = (string) reader["Role"];
+            return deletedUser;
+        }
         else
         {
-            System.Console.WriteLine("Invalid Customer Id: Please Try Again");
+            // Else Read() found nothing -> Insert Failed.
             return null;
         }
     }

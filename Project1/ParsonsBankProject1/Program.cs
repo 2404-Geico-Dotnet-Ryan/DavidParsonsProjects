@@ -6,8 +6,8 @@ namespace ParsonsBankProject1;
 
 class Program
 {
-    static AccountServices aS;
-    static UserService us;
+    static AccountServices accountServices;
+    static UserService userService;
     static User? currentUser = null;
 
     static void Main(string[] args)
@@ -18,7 +18,7 @@ class Program
         // System.Console.WriteLine(connectionString); // Remove later
 
         UserRepo ur = new(connectionString);
-        us = new(ur);
+        userService = new(ur);
 
         System.Console.WriteLine();
         System.Console.WriteLine("||||||||||||||||||||||||||||||||||||");
@@ -186,7 +186,7 @@ class Program
         System.Console.WriteLine("Password:");
         string password = Console.ReadLine() ?? "";
 
-        currentUser = us.Login(username, password);
+        currentUser = userService.Login(username, password);
 
         System.Console.WriteLine("Login Successful");;
 
@@ -253,7 +253,7 @@ class Program
         System.Console.WriteLine("Please enter the amount your would like to deposit into your account: " + account.AccountName);
         double deposit = double.Parse(Console.ReadLine() ?? "0");
         
-        double accountBalance = aS.MakeDeposit(account, deposit);
+        double accountBalance = accountServices.MakeDeposit(account, deposit);
 
         // double newAccountBalance = accountBalance + deposit; // Initally had this before the line above.
 
@@ -270,7 +270,7 @@ class Program
         System.Console.WriteLine("Please enter the amount your would like to withdrawal from your account: " + account.AccountName);
         double withdrawal = double.Parse(Console.ReadLine() ?? "0");
 
-        double accountBalance = aS.MakeWithdrawal(account, withdrawal);
+        double accountBalance = accountServices.MakeWithdrawal(account, withdrawal);
 
         System.Console.WriteLine("The new balance for " + account.AccountName + " is: " + accountBalance);
         System.Console.WriteLine();
@@ -280,7 +280,7 @@ class Program
     {
         Account? acc = PromptUserForAccount();
 
-        acc = aS.DeleteAccount(acc);
+        acc = accountServices.DeleteAccount(acc);
 
         System.Console.WriteLine("Deleted Account: " + acc);
     }
@@ -294,7 +294,7 @@ class Program
             System.Console.WriteLine("Please enter an account id: ");
             int id = int.Parse(Console.ReadLine() ?? "0");
             if (id == 0) return null;
-            retrievedAccount = aS.RetrieveAccount(id);
+            retrievedAccount = accountServices.RetrieveAccount(id);
         }
         return retrievedAccount;
     }

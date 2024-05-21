@@ -1,10 +1,10 @@
 class UserService
 {
-    UserRepo ur;
+    UserRepo userRepo;
 
     public UserService(UserRepo ur)
     {
-        this.ur = ur;
+        this.userRepo = ur;
     }
 
     public User? CreateUserAccount(User user)
@@ -17,7 +17,7 @@ class UserService
         }
 
         // Let's not let them register if the username is already taken
-        List<User> allUsers = ur.GetAllUsers();
+        List<User> allUsers = userRepo.GetAllUsers();
 
         foreach(User u in allUsers)
         {
@@ -29,12 +29,12 @@ class UserService
         }
 
         // If we do not care about any validation - this is a simple/trivial service method
-        return ur.AddUser(user);
+        return userRepo.AddUser(user);
     }
 
     public User? Login(string username, string password)
     {
-        List<User> allUsers = ur.GetAllUsers();
+        List<User> allUsers = userRepo.GetAllUsers();
 
         foreach(User u in allUsers)
         {

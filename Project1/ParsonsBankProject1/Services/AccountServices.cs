@@ -3,11 +3,11 @@ using System.ComponentModel;
 class AccountServices
 {  
     
-    AccountRepo ar;
+    AccountRepo accountRepo;
 
     public AccountServices(AccountRepo ar)
     {
-        this.ar = ar;
+        accountRepo = ar;
     }
 
     public double MakeInitialDeposit()
@@ -21,7 +21,7 @@ class AccountServices
     public Account? RetrieveAccount(int id)
     {
         // Need to create code block to view existing $$ amount in account
-        return ar.GetAccount(id);
+        return accountRepo.GetAccount(id);
     }
 
     public double MakeDeposit(Account account, double deposit)
@@ -44,6 +44,6 @@ class AccountServices
 
     public Account? DeleteAccount(Account account)
     {
-        return ar.DeleteAccount(account);
+        return accountRepo.DeleteAccount(account);
     }
 }

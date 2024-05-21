@@ -33,13 +33,15 @@ class UserRepo
         if (reader.Read())
         {
             // If Read() found data - > then extract it
-            User newUser = new();
-            newUser.UserId = (int) reader["UserId"];
-            newUser.Username = (string) reader["Username"];
-            newUser.Password = (string) reader["Password"];
-            newUser.Password = (string) reader["FirstName"];
-            newUser.Password = (string) reader["LastName"];
-            newUser.Role = (string) reader["Role"];
+            User newUser = new()
+            {
+                UserId = (int)reader["UserId"],
+                Username = (string)reader["Username"],
+                Password = (string)reader["Password"],
+                FirstName = (string)reader["FirstName"],
+                LastName = (string)reader["LastName"],
+                Role = (string)reader["Role"]
+            };
             return newUser;
         }
         else
@@ -69,13 +71,15 @@ class UserRepo
         if (reader.Read())
         {
             // If Read() found data - > then extract it
-            User retrievedUser = new();
-            retrievedUser.UserId = (int) reader["UserId"];
-            retrievedUser.Username = (string) reader["Username"];
-            retrievedUser.Password = (string) reader["Password"];
-            retrievedUser.Password = (string) reader["FirstName"];
-            retrievedUser.Password = (string) reader["LastName"];
-            retrievedUser.Role = (string) reader["Role"];
+            User retrievedUser = new()
+            {
+                UserId = (int)reader["UserId"],
+                Username = (string)reader["Username"],
+                Password = (string)reader["Password"],
+                FirstName = (string) reader["FirstName"],
+                LastName = (string) reader["LastName"],
+                Role = (string) reader["Role"]
+            };
             return retrievedUser;
         }
         else
@@ -91,7 +95,7 @@ class UserRepo
         connection.Open();
 
         // Create the SQL String
-        string sql = "SELECT * FROM dbo.[User] OUTPUT INSERTED.*"; // The "Output inserted.*" will return the values
+        string sql = "SELECT * FROM dbo.[User]"; // The "Output inserted.*" will return the values
 
         // Set up SqlCommand Command object and use its methods to modify the parameterized values
         SqlCommand cmd = new(sql, connection);
@@ -100,23 +104,23 @@ class UserRepo
         // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
         using SqlDataReader reader = cmd.ExecuteReader();
 
-        if (reader.Read())
+        List<User> userList = new();
+
+        while (reader.Read())
         {
-            // If Read() found data - > then extract it
             User retrievedUser = new();
-            retrievedUser.UserId = (int) reader["UserId"];
-            retrievedUser.Username = (string) reader["Username"];
-            retrievedUser.Password = (string) reader["Password"];
-            retrievedUser.Password = (string) reader["FirstName"];
-            retrievedUser.Password = (string) reader["LastName"];
-            retrievedUser.Role = (string) reader["Role"];
-            return null;
+            {
+                retrievedUser.UserId = (int) reader["UserId"];
+                retrievedUser.Username = (string) reader["Username"];
+                retrievedUser.Password = (string) reader["Password"];
+                retrievedUser.FirstName = (string) reader["FirstName"];
+                retrievedUser.LastName = (string) reader["LastName"];
+                retrievedUser.Role = (string) reader["Role"];
+            }
+            userList.Add(retrievedUser);
         }
-        else
-        {
-            // Else Read() found nothing -> Insert Failed.
-            return null;
-        }
+
+        return userList;
     }
 
     // Update
@@ -143,13 +147,15 @@ class UserRepo
         if (reader.Read())
         {
             // If Read() found data - > then extract it
-            User updatedUser = new();
-            updatedUser.UserId = (int) reader["UserId"];
-            updatedUser.Username = (string) reader["Username"];
-            updatedUser.Password = (string) reader["Password"];
-            updatedUser.Password = (string) reader["FirstName"];
-            updatedUser.Password = (string) reader["LastName"];
-            updatedUser.Role = (string) reader["Role"];
+            User updatedUser = new()
+            {
+                UserId = (int)reader["UserId"],
+                Username = (string)reader["Username"],
+                Password = (string)reader["Password"],
+                FirstName = (string)reader["FirstName"],
+                LastName = (string)reader["LastName"],
+                Role = (string)reader["Role"]
+            };
             return updatedUser;
         }
         else
@@ -166,7 +172,7 @@ class UserRepo
         connection.Open();
 
         // Create the SQL String
-        string sql = "DELETE FROM dbo.[User] OUTPUT INSERTED.* WHERE Id = (@Id)"; // The "Output inserted.*" will return the values
+        string sql = "DELETE FROM dbo.[User] OUTPUT INSERTED.* WHERE UserId = (@UserId)"; // The "Output inserted.*" will return the values
 
          // Set up SqlCommand Command object and use its methods to modify the parameterized values
         SqlCommand cmd = new(sql, connection);
@@ -179,13 +185,15 @@ class UserRepo
         if (reader.Read())
         {
             // If Read() found data - > then extract it
-            User deletedUser = new();
-            deletedUser.UserId = (int) reader["UserId"];
-            deletedUser.Username = (string) reader["Username"];
-            deletedUser.Password = (string) reader["Password"];
-            deletedUser.Password = (string) reader["FirstName"];
-            deletedUser.Password = (string) reader["LastName"];
-            deletedUser.Role = (string) reader["Role"];
+            User deletedUser = new()
+            {
+                UserId = (int)reader["UserId"],
+                Username = (string)reader["Username"],
+                Password = (string)reader["Password"],
+                FirstName = (string)reader["FirstName"],
+                LastName = (string)reader["LastName"],
+                Role = (string)reader["Role"]
+            };
             return deletedUser;
         }
         else

@@ -177,7 +177,7 @@ class Program
     //     return true;
     // }
 
-    private static void LoginToAccount()
+    private static User? LoginToAccount()
     {
         // Need to create code block for a customer to log into the Bank Account
         System.Console.WriteLine("Please log into your account");
@@ -186,9 +186,12 @@ class Program
         System.Console.WriteLine("Password:");
         string password = Console.ReadLine() ?? "";
 
-        us.Login(username, password);
+        currentUser = us.Login(username, password);
 
         System.Console.WriteLine("Login Successful");;
+
+        return currentUser;
+
     }
 
     private static void CreateAnAccount()
@@ -275,11 +278,11 @@ class Program
 
     private static void DeletingAccount()
     {
-        Account? account = PromptUserForAccount();
+        Account? acc = PromptUserForAccount();
 
-        account = aS.DeleteAccount(account);
+        acc = aS.DeleteAccount(acc);
 
-        System.Console.WriteLine("Deleted Account: " + account);
+        System.Console.WriteLine("Deleted Account: " + acc);
     }
 
     private static Account? PromptUserForAccount()

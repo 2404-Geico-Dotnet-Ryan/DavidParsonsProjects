@@ -2,15 +2,13 @@ using System.ComponentModel;
 
 class AccountServices
 {  
-    /*
-        Service:
-            - Check Account Balance
-            - Deposite Money into Account
-            - Withdrawal Money from Account
-            - Delete Account
-    */
     
-    AccountRepo bankr = new();
+    AccountRepo ar;
+
+    public AccountServices(AccountRepo ar)
+    {
+        this.ar = ar;
+    }
 
     public double MakeInitialDeposit()
     {
@@ -23,7 +21,7 @@ class AccountServices
     public Account? RetrieveAccount(int id)
     {
         // Need to create code block to view existing $$ amount in account
-        return bankr.GetAccount(id);
+        return ar.GetAccount(id);
     }
 
     public double MakeDeposit(Account account, double deposit)
@@ -46,6 +44,6 @@ class AccountServices
 
     public Account? DeleteAccount(Account account)
     {
-        return bankr.DeleteAccount(account);
+        return ar.DeleteAccount(account);
     }
 }

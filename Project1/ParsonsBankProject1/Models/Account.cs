@@ -9,7 +9,7 @@ class Account
     // public User? UserId { get; set; }
 
 
-    public Account(int v)
+    public Account()
     {
         AccountName = "";
         AccountType = "";

@@ -1,18 +1,21 @@
+DROP TABLE [User];
 CREATE TABLE [User] (
 	UserId INT IDENTITY(1, 1) PRIMARY KEY,
 	Username VARCHAR(50) UNIQUE NOT NULL,
 	Password VARCHAR(50) NOT NULL,
 	FirstName VARCHAR(50) NOT NULL,
 	LastName VARCHAR(50) NOT NULL,
-	Role VARCHAR(50) NOT NULL,
+	Role VARCHAR(50) NOT NULL CHECK(Role IN ('user', 'admin')),
 );
 
+DROP TABLE Account;
 CREATE TABLE Account (
 	Id INT IDENTITY(1000, 1) PRIMARY KEY,
 	AccountName VARCHAR(50) NOT NULL,
-	Balance DECIMAL(22,2) NOT NULL,
+	Balance DECIMAL(22,2) NOT NULL DEFAULT 0,
 	AccountType VARCHAR(50) NOT NULL,
-	UserId INT FOREIGN KEY REFERENCES [User](UserId),
+	UserId INT,
+	CONSTRAINT FK_UserAccount FOREIGN KEY (UserId) REFERENCES [User](UserId)
 );
 
 INSERT INTO [User] (Username, Password, FirstName, LastName, Role) VALUES 

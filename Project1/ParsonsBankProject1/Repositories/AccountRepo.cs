@@ -1,78 +1,198 @@
+using Microsoft.Data.SqlClient;
+
 class AccountRepo
 {
-    /*
-    This class is in the Data Access / Repository Layer of our application.
-    So it is solely responsible for any data access and management centered around our Movie Object.
+    private readonly string _connectDatabase;
 
-    4 Major Operations we'd like to manage in this location.
-        - CRUD Operations
-            - C - Create
-            - R - Read
-            - U - Update
-            - D - Delete
-    */
-
-    AccountStorage accountStorage = new();
+    public AccountRepo(string connectionString)
+    {
+        _connectDatabase = connectionString;
+    }
 
     // Create
     public Account AddAccount(Account acc)
     {
-        acc.Id = accountStorage.idCounter++;
+        using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
+        connection.Open();
 
-        accountStorage.accountDirectory.Add(acc.Id, acc);
+        // Create the SQL String
+        string sql = "INSERT INTO dbo.Account OUTPUT INSERTED.* VALUES (@AccountName, @Balance, @AccountType)"; // The "Output inserted.*" will return the values
 
-        return acc;
+        // Set up SqlCommand Command object and use its methods to modify the parameterized values
+        SqlCommand cmd = new(sql, connection);
+        cmd.Parameters.AddWithValue("@AccountName", acc.AccountName);
+        cmd.Parameters.AddWithValue("@Balance", acc.Balance);
+        cmd.Parameters.AddWithValue("@AccountType", acc.AccountType);
+        // cmd.Parameters.AddWithValue("@UserId", acc.UserId);
+
+        //Execute the query
+        // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
+        using SqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
+        {
+            // If Read() found data - > then extract it
+            Account newAcc = new()
+            {
+                Id = (int)reader["Id"],
+                AccountName = (string)reader["AccountName"],
+                Balance = (double)reader["Balance"],
+                AccountType = (string)reader["AccountType"],
+                // UserId = (User)reader["UserId"]
+            };
+            return newAcc;
+        }
+        else
+        {
+            // Else Read() found nothing -> Insert Failed.
+            return null;
+        }
     }
 
     // Read
     public Account? GetAccount(int id)
     {
-        if(accountStorage.accountDirectory.ContainsKey(id))
+        using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
+        connection.Open();
+
+        // Create the SQL String
+        string sql = "INSERT INTO dbo.Account OUTPUT INSERTED.* WHERE Id = (@Id)"; // The "Output inserted.*" will return the values
+
+        // Set up SqlCommand Command object and use its methods to modify the parameterized values
+        SqlCommand cmd = new(sql, connection);
+        cmd.Parameters.AddWithValue("@Id", id);
+
+        //Execute the query
+        // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
+        using SqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
         {
-            return accountStorage.accountDirectory[id];    
+            // If Read() found data - > then extract it
+            Account newAcc = new()
+            {
+                Id = (int)reader["Id"],
+                AccountName = (string)reader["AccountName"],
+                Balance = (double)reader["Balance"],
+                AccountType = (string)reader["AccountType"],
+                // UserId = (User)reader["UserId"]
+            };
+            return newAcc;
         }
         else
         {
-            System.Console.WriteLine("Invalid Account Id - Please Try Again");
+            // Else Read() found nothing -> Insert Failed.
             return null;
         }
+
     }
 
     public List<Account> GetAllAccounts()
     {
-        //I am chooseing to return a List because that is a much more common collection to
-        //work with. It does mean I have to do a little bit of work here - but its not bad.
-        return accountStorage.accountDirectory.Values.ToList();
+        using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
+        connection.Open();
+
+        // Create the SQL String
+        string sql = "SELECT * FROM dbo.Account"; // The "Output inserted.*" will return the values
+
+        // Set up SqlCommand Command object and use its methods to modify the parameterized values
+        SqlCommand cmd = new(sql, connection);
+
+        //Execute the query
+        // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
+        using SqlDataReader reader = cmd.ExecuteReader();
+
+        List<Account> accList = new();
+
+        while (reader.Read())
+        {
+            Account retrievedAcc = new();
+            {
+                retrievedAcc.Id = (int) reader["Id"];
+                retrievedAcc.AccountName = (string) reader["AccountName"];
+                retrievedAcc.Balance = (double) reader["Balance"];
+                retrievedAcc.AccountType = (string) reader["AccountType"];
+                // retrievedAcc.UserId = (User) reader["UserId"];
+            }
+            accList.Add(retrievedAcc);
+        }
+
+        return accList;
     }
 
     // Update
     public Account? UpdateAccount(Account acc)
     {
-        try
+        using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
+        connection.Open();
+
+        // Create the SQL String
+        string sql = "UPDATE dbo.Account OUTPUT INSERTED.* SET (@AccountName, @Balance, @AccountType)"; // The "Output inserted.*" will return the values
+
+        // Set up SqlCommand Command object and use its methods to modify the parameterized values
+        SqlCommand cmd = new(sql, connection);
+        cmd.Parameters.AddWithValue("@AccountName", acc.AccountName);
+        cmd.Parameters.AddWithValue("@Balance", acc.Balance);
+        cmd.Parameters.AddWithValue("@AccountType", acc.AccountType);
+        // cmd.Parameters.AddWithValue("@UserId", acc.UserId);
+
+        //Execute the query
+        // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
+        using SqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
         {
-            accountStorage.accountDirectory[acc.Id] = acc;
-            return acc;
+            // If Read() found data - > then extract it
+            Account updatedAcc = new()
+            {
+                Id = (int)reader["Id"],
+                AccountName = (string)reader["AccountName"],
+                Balance = (double)reader["Balance"],
+                AccountType = (string)reader["AccountType"],
+                // UserId = (User)reader["UserId"]
+            };
+            return updatedAcc;
         }
-        catch (Exception)
+        else
         {
-            System.Console.WriteLine("Invalid Account Id - Please Try Again");
+            // Else Read() found nothing -> Insert Failed.
             return null;
         }
     }
 
     // Delete
-    public Account? DeleteAccount(Account account)
+    public Account? DeleteAccount(Account acc)
     {
-        //If we have the id - remove it from storage
-        bool didRemove = accountStorage.accountDirectory.Remove(account.Id);
+        using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
+        connection.Open();
 
-        if (didRemove)
+        // Create the SQL String
+        string sql = "DELETE FROM dbo.Account OUTPUT INSERTED.* WHERE Id = (@Id)"; // The "Output inserted.*" will return the values
+
+        // Set up SqlCommand Command object and use its methods to modify the parameterized values
+        SqlCommand cmd = new(sql, connection);
+        cmd.Parameters.AddWithValue("@Id", acc.Id);
+
+        //Execute the query
+        // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
+        using SqlDataReader reader = cmd.ExecuteReader();
+
+        if (reader.Read())
         {
-            return account;
-        }    
+            // If Read() found data - > then extract it
+            Account deletedAcc = new()
+            {
+                Id = (int)reader["Id"],
+                AccountName = (string)reader["AccountName"],
+                Balance = (double)reader["Balance"],
+                AccountType = (string)reader["AccountType"],
+                // UserId = (User)reader["UserId"]
+            };
+            return deletedAcc;
+        }
         else
         {
-            System.Console.WriteLine("Invalid Account Id: Please Try Again");
+            // Else Read() found nothing -> Insert Failed.
             return null;
         }
     }

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ParsonsBankProject1")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b644f80dd1c7a1581040adaa877b539b9bca9f4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6767f35d4f95d7681fdebe922c1daee7523d6ff0")]
 [assembly: System.Reflection.AssemblyProductAttribute("ParsonsBankProject1")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ParsonsBankProject1")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

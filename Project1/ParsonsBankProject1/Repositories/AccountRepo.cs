@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 class AccountRepo
 {
     private readonly string _connectDatabase;
-    static UserRepo ur;
+    // static UserRepo ur;
     public AccountRepo(string connectionString)
     {
         _connectDatabase = connectionString;

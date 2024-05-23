@@ -261,11 +261,11 @@ class Program
     private static void OpenAccount()
     {
         System.Console.WriteLine("Let's create a new account!");
-        System.Console.WriteLine("What would you like the name of your account to be?");
-        string accountName = Console.ReadLine() ?? "";
-        System.Console.WriteLine();
         System.Console.WriteLine("What type of account would you like to open? (Checking/Savings)");
         string accountType = Console.ReadLine() ?? "";
+        System.Console.WriteLine();
+        System.Console.WriteLine("What would you like the name of your account to be?");
+        string accountName = Console.ReadLine() ?? "";
         System.Console.WriteLine();
         System.Console.WriteLine("Please enter the $ amount you would like to add to your new account!");
         double balance = double.Parse(Console.ReadLine() ?? "0");

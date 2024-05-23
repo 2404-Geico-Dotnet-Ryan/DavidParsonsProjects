@@ -15,14 +15,6 @@ class AccountServices
         return accountRepo.AddAccount(account);
     }
 
-    public double MakeInitialDeposit()
-    {
-        double initialDeposit = 0;
-
-
-        return initialDeposit;
-    }
-
     public Account? RetrieveAccount(int id)
     {
         // Need to create code block to view existing $$ amount in account

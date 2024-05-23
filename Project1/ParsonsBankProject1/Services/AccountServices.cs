@@ -10,6 +10,11 @@ class AccountServices
         accountRepo = ar;
     }
 
+    public Account? NewAccount(Account account)
+    {
+        return accountRepo.AddAccount(account);
+    }
+
     public double MakeInitialDeposit()
     {
         double initialDeposit = 0;
@@ -24,22 +29,40 @@ class AccountServices
         return accountRepo.GetAccount(id);
     }
 
-    public double MakeDeposit(Account account, double deposit)
+    public List<Account?> RetrieveAllAccounts(User currentUser)
     {
-        double accountBalance = account.Balance;
+        // Need to create code block to view existing $$ amount in account
+        List<Account> allAccounts = accountRepo.GetAllAccounts();
 
-        accountBalance += deposit;
-
-        return accountBalance;
+        //Then Filter out movies you dont want.
+        List<Account> userAccounts = new();
+        //run a loop over all movies to determine if they make the cut - to be added to the filtered list.
+        foreach (Account a in allAccounts)
+        {
+            if (a.UserId == currentUser.UserId)
+            {
+                userAccounts.Add(a);
+            }
+        }
+        return userAccounts;
     }
 
-    public double MakeWithdrawal(Account account, double withdrawal)
+    public Account MakeDeposit(Account account, double deposit)
     {
-        double accountBalance = account.Balance;
+        account.Balance += deposit;
 
-        accountBalance -= withdrawal;
+        accountRepo.UpdateAccount(account);
 
-        return accountBalance;
+        return account;
+    }
+
+    public Account MakeWithdrawal(Account account, double withdrawal)
+    {
+        account.Balance -= withdrawal;
+
+        accountRepo.UpdateAccount(account);
+
+        return account;
     }
 
     public Account? DeleteAccount(Account account)

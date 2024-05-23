@@ -19,7 +19,7 @@ class UserRepo
         string sql = "INSERT INTO dbo.[User] OUTPUT INSERTED.* VALUES (@Username, @Password, @FirstName, @LastName, @Role)"; // The "Output inserted.*" will return the values
 
         // Set up SqlCommand Command object and use its methods to modify the parameterized values
-        SqlCommand cmd = new(sql, connection);
+        using SqlCommand cmd = new(sql, connection);
         cmd.Parameters.AddWithValue("@Username", user.Username);
         cmd.Parameters.AddWithValue("@Password", user.Password);
         cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
@@ -58,10 +58,10 @@ class UserRepo
         connection.Open();
 
         // Create the SQL String
-        string sql = "SELECT * FROM dbo.[User] OUTPUT INSERTED.* WHERE Id = (@UserId)"; // The "Output inserted.*" will return the values
+        string sql = "SELECT * FROM dbo.[User] OUTPUT INSERTED.* WHERE UserId = (@UserId)"; // The "Output inserted.*" will return the values
 
         // Set up SqlCommand Command object and use its methods to modify the parameterized values
-        SqlCommand cmd = new(sql, connection);
+        using SqlCommand cmd = new(sql, connection);
         cmd.Parameters.AddWithValue("@UserId", userId);
 
         //Execute the query
@@ -89,8 +89,12 @@ class UserRepo
         }
     }
 
-    public List<User> GetAllUsers()
+    public List<User>? GetAllUsers()
     {
+        List<User> userList = new();
+
+        try
+        {
         using SqlConnection connection = new(_connectDatabase);  // add the using keyword to say we are using this variable and to call dispose method when we leave the scope of its use - Method scope.
         connection.Open();
 
@@ -98,13 +102,11 @@ class UserRepo
         string sql = "SELECT * FROM dbo.[User]"; // The "Output inserted.*" will return the values
 
         // Set up SqlCommand Command object and use its methods to modify the parameterized values
-        SqlCommand cmd = new(sql, connection);
+        using SqlCommand cmd = new(sql, connection);
 
         //Execute the query
         // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
         using SqlDataReader reader = cmd.ExecuteReader();
-
-        List<User> userList = new();
 
         while (reader.Read())
         {
@@ -121,6 +123,13 @@ class UserRepo
         }
 
         return userList;
+        }
+        catch (Exception e)
+        {
+            System.Console.WriteLine(e.Message);
+            System.Console.WriteLine(e.StackTrace);
+            return null;
+        }
     }
 
     // Update
@@ -130,10 +139,10 @@ class UserRepo
         connection.Open();
 
         // Create the SQL String
-        string sql = "UPDATE dbo.[User] OUTPUT INSERTED.* SET (@Username, @Password, @Role)"; // The "Output inserted.*" will return the values
+        string sql = "UPDATE dbo.[User] SET (Username = @Username, Password = @Password, Role = @Role) OUTPUT INSERTED.* WHERE UserId = (@UserId)"; // The "Output inserted.*" will return the values
 
          // Set up SqlCommand Command object and use its methods to modify the parameterized values
-        SqlCommand cmd = new(sql, connection);
+        using SqlCommand cmd = new(sql, connection);
         cmd.Parameters.AddWithValue("@Username", user.Username);
         cmd.Parameters.AddWithValue("@Password", user.Password);
         cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
@@ -172,10 +181,10 @@ class UserRepo
         connection.Open();
 
         // Create the SQL String
-        string sql = "DELETE FROM dbo.[User] OUTPUT INSERTED.* WHERE UserId = (@UserId)"; // The "Output inserted.*" will return the values
+        string sql = "DELETE FROM dbo.[User] OUTPUT DELETED.* WHERE UserId = (@UserId)"; // The "Output inserted.*" will return the values
 
          // Set up SqlCommand Command object and use its methods to modify the parameterized values
-        SqlCommand cmd = new(sql, connection);
+        using SqlCommand cmd = new(sql, connection);
         cmd.Parameters.AddWithValue("@Id", user.UserId);
 
         //Execute the query

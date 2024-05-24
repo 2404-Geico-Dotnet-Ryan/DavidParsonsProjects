@@ -33,15 +33,7 @@ class UserRepo
         if (reader.Read())
         {
             // If Read() found data - > then extract it
-            User newUser = new()
-            {
-                UserId = (int)reader["UserId"],
-                Username = (string)reader["Username"],
-                Password = (string)reader["Password"],
-                FirstName = (string)reader["FirstName"],
-                LastName = (string)reader["LastName"],
-                Role = (string)reader["Role"]
-            };
+            User newUser = UserBuilder(reader);
             return newUser;
         }
         else
@@ -71,16 +63,8 @@ class UserRepo
         if (reader.Read())
         {
             // If Read() found data - > then extract it
-            User retrievedUser = new()
-            {
-                UserId = (int)reader["UserId"],
-                Username = (string)reader["Username"],
-                Password = (string)reader["Password"],
-                FirstName = (string) reader["FirstName"],
-                LastName = (string) reader["LastName"],
-                Role = (string) reader["Role"]
-            };
-            return retrievedUser;
+            User newUser = UserBuilder(reader);
+            return newUser;
         }
         else
         {
@@ -110,16 +94,8 @@ class UserRepo
 
         while (reader.Read())
         {
-            User retrievedUser = new();
-            {
-                retrievedUser.UserId = (int) reader["UserId"];
-                retrievedUser.Username = (string) reader["Username"];
-                retrievedUser.Password = (string) reader["Password"];
-                retrievedUser.FirstName = (string) reader["FirstName"];
-                retrievedUser.LastName = (string) reader["LastName"];
-                retrievedUser.Role = (string) reader["Role"];
-            }
-            userList.Add(retrievedUser);
+            User newUser = UserBuilder(reader);
+            userList.Add(newUser);
         }
 
         return userList;
@@ -139,10 +115,11 @@ class UserRepo
         connection.Open();
 
         // Create the SQL String
-        string sql = "UPDATE dbo.[User] SET (Username = @Username, Password = @Password, Role = @Role) OUTPUT INSERTED.* WHERE UserId = (@UserId)"; // The "Output inserted.*" will return the values
+        string sql = "UPDATE dbo.[User] SET Username = @Username, Password = @Password, Role = @Role OUTPUT INSERTED.* WHERE UserId = (@UserId)"; // The "Output inserted.*" will return the values
 
          // Set up SqlCommand Command object and use its methods to modify the parameterized values
         using SqlCommand cmd = new(sql, connection);
+        cmd.Parameters.AddWithValue("@UserId", user.UserId);
         cmd.Parameters.AddWithValue("@Username", user.Username);
         cmd.Parameters.AddWithValue("@Password", user.Password);
         cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
@@ -156,16 +133,8 @@ class UserRepo
         if (reader.Read())
         {
             // If Read() found data - > then extract it
-            User updatedUser = new()
-            {
-                UserId = (int)reader["UserId"],
-                Username = (string)reader["Username"],
-                Password = (string)reader["Password"],
-                FirstName = (string)reader["FirstName"],
-                LastName = (string)reader["LastName"],
-                Role = (string)reader["Role"]
-            };
-            return updatedUser;
+            User newUser = UserBuilder(reader);
+            return newUser;
         }
         else
         {
@@ -185,7 +154,7 @@ class UserRepo
 
          // Set up SqlCommand Command object and use its methods to modify the parameterized values
         using SqlCommand cmd = new(sql, connection);
-        cmd.Parameters.AddWithValue("@Id", user.UserId);
+        cmd.Parameters.AddWithValue("@UserId", user.UserId);
 
         //Execute the query
         // cmd.ExecuteNonQuery(); // Executes a non select SQL statement (inserts, updates, deletes). ** NOT NEEDED WITH THE Output inserted.* above **
@@ -194,21 +163,25 @@ class UserRepo
         if (reader.Read())
         {
             // If Read() found data - > then extract it
-            User deletedUser = new()
-            {
-                UserId = (int)reader["UserId"],
-                Username = (string)reader["Username"],
-                Password = (string)reader["Password"],
-                FirstName = (string)reader["FirstName"],
-                LastName = (string)reader["LastName"],
-                Role = (string)reader["Role"]
-            };
-            return deletedUser;
+            User newUser = UserBuilder(reader);
+            return newUser;
         }
         else
         {
             // Else Read() found nothing -> Insert Failed.
             return null;
         }
+    }
+
+    private static User UserBuilder(SqlDataReader reader)
+    {
+        User newUser = new();
+        newUser.UserId = (int)reader["UserId"];
+        newUser.Username = (string)reader["Username"];
+        newUser.Password = (string)reader["Password"];
+        newUser.FirstName = (string)reader["FirstName"];
+        newUser.LastName = (string)reader["LastName"];
+        newUser.Role = (string)reader["Role"];
+        return newUser;
     }
 }

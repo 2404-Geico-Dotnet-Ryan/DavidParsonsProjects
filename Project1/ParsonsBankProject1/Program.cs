@@ -14,6 +14,7 @@ class Program
 
     static void Main(string[] args)
     {
+        // Console.Clear();
         string path = @"C:\Users\U30A97\RevatureBootcamp\DavidParsonsProjects\Project1\ParsonsBankProject1\ParsonsBankingApp-DB.txt"; // Can also add and @ in front of the string "" to allow the single backslash.
         string connectionString = File.ReadAllText(path);
 
@@ -68,10 +69,11 @@ class Program
             System.Console.WriteLine("[2] Existing Customer: Login");
             System.Console.WriteLine("[0] Exit");
             System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.Console.WriteLine();
 
             int input = int.Parse(Console.ReadLine() ?? "0");
             //Same Validation method copied over
-            input = ValidateSelection(input, 3);
+            input = ValidateSelection(input, 2);
 
             again = DecideLoginOption(input);
         }
@@ -109,10 +111,10 @@ class Program
         while (again)
         {
             Console.ForegroundColor = ConsoleColor.White;
+            System.Console.WriteLine();
+            System.Console.WriteLine("*** Welcome, " + currentUser.FirstName + "! ***");
             if(currentUser.Role == "user")
             {
-                System.Console.WriteLine();
-                System.Console.WriteLine("*** Welcome, " + currentUser.FirstName + "! ***");
                 System.Console.WriteLine();
                 System.Console.WriteLine("Please select which option applies below: ");
                 System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -121,8 +123,10 @@ class Program
                 System.Console.WriteLine("[3] Make a Deposit");
                 System.Console.WriteLine("[4] Make a Withdrawal");
                 System.Console.WriteLine("[5] Delete Account");
-                System.Console.WriteLine("[6] Logout");
+                System.Console.WriteLine("[6] Manage User");
+                System.Console.WriteLine("[7] Logout");
                 System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.Console.WriteLine();
 
                 int input = int.Parse(Console.ReadLine() ?? "0");
                 //Same Validation method copied over
@@ -132,19 +136,18 @@ class Program
             else
             {
                 System.Console.WriteLine();
-                System.Console.WriteLine("Welcome, " + currentUser.FirstName);
-                System.Console.WriteLine();
                 System.Console.WriteLine("Please select which option applies below: ");
                 System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                System.Console.WriteLine("[1] Open Account");
-                System.Console.WriteLine("[2] View Account Balance");
-                System.Console.WriteLine("[3] Delete Account");
+                System.Console.WriteLine("[1] View Account Balance");
+                System.Console.WriteLine("[2] Deposit Money");
+                System.Console.WriteLine("[3] Withdrawal Money");
                 System.Console.WriteLine("[4] Logout");
                 System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.Console.WriteLine();
 
                 int input = int.Parse(Console.ReadLine() ?? "0");
                 //Same Validation method copied over
-                input = ValidateSelection(input, 5);
+                input = ValidateSelection(input, 4);
                 again = MainMenuOption(input);
             }
             Thread.Sleep(1000);
@@ -168,6 +171,8 @@ class Program
                 case 5:
                     DeletingAccount(); break;
                 case 6:
+                    ManageUser(); break;
+                case 7:
                     LogOut();
                     System.Console.WriteLine("Logged out, thanks for stopping by!");
                     return false;
@@ -182,11 +187,11 @@ class Program
             switch (input)
             {
                 case 1:
-                    OpenAccount(); break;
-                case 2:
                     ViewAccountBalance(); break;
+                case 2:
+                    DepositMoney(); break;
                 case 3:
-                    DeletingAccount(); break;
+                    WithdrawalMoney(); break;
                 case 4:
                     LogOut();
                     System.Console.WriteLine("Logged out, thanks for stopping by!");
@@ -303,7 +308,7 @@ class Program
         System.Console.WriteLine("~~~~~~~~~ Here is a summary of your accounts ~~~~~~~~~");
         foreach (Account a in accounts)
         {
-            System.Console.WriteLine("Account: " + a.AccountName + " has a balance of: " + a.Balance + ".");
+            System.Console.WriteLine("Account " + a.Id + ": " + a.AccountName + " has a balance of: " + a.Balance + ".");
         }
         System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.Console.WriteLine();
@@ -355,6 +360,95 @@ class Program
         Thread.Sleep(1000);
     }
 
+    private static void ManageUser()
+    {
+        bool again = true;
+        while (again)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            System.Console.WriteLine();
+            System.Console.WriteLine("*** " + currentUser.FirstName + " " + currentUser.LastName + "'s Profile! ***");
+
+            System.Console.WriteLine();
+            System.Console.WriteLine("Please select which option applies below: ");
+            System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.Console.WriteLine("[1] Change Password");
+            System.Console.WriteLine("[2] Delete User Account");
+            System.Console.WriteLine("[0] Exit");
+            System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.Console.WriteLine();
+
+            int input = int.Parse(Console.ReadLine() ?? "0");
+            //Same Validation method copied over
+            input = ValidateSelection(input, 2);
+            again = UserMenuOption(input);
+        }
+    }
+
+    private static bool UserMenuOption(int input)
+    {
+        switch (input)
+        {
+            case 1:
+                UpdateUserPassword(); break;
+            case 2:
+                DeleteUserAccount(); break;
+            case 0:
+                {
+                    return false;
+                }
+            default:
+                {
+                    //If option 0 or anything else -> set keepGoing to false.
+                    System.Console.WriteLine("Invalid selection, please try again");
+                    break;
+                }
+        
+        }
+        return true;
+    }
+
+    private static void UpdateUserPassword()
+    {
+        string priorPassword = currentUser.Password;
+        System.Console.WriteLine();
+        System.Console.WriteLine("Let's create a new password!");
+        System.Console.WriteLine("Please provide your new password");
+        string newPassword = Console.ReadLine() ?? "";
+        System.Console.WriteLine();
+
+        
+        userService.UpdatePassword(currentUser, newPassword);
+
+        System.Console.WriteLine(currentUser.FirstName +", your password was changed from " + priorPassword + " to " + newPassword);
+        System.Console.WriteLine();
+    }
+
+    private static void DeleteUserAccount()
+    {
+        System.Console.WriteLine();
+        System.Console.WriteLine("You have selected to Delete your account");
+        User? user = currentUser;
+        List<Account> accounts = accountServices.RetrieveAllAccounts(currentUser);
+    
+
+        if(accounts.Count != 0)
+        {
+            System.Console.WriteLine("You currently have open accounts with Parsons Bank");
+            System.Console.WriteLine("You can not Delete your Profile with open accounts!");
+            // ManageUser();
+        }
+        else
+        {
+            user = userService.DeleteAccount(user);
+            System.Console.WriteLine("Deleted Account: " + user);
+            System.Console.WriteLine("Goodbye :(");
+            currentUser = null;
+            MainLoginMenu();
+        }
+        Thread.Sleep(1000);
+    }
+
     private static void LogOut()
     {
         currentUser = null;
@@ -376,7 +470,7 @@ class Program
 
     private static int ValidateSelection(int cmd, int maxValue)
     {
-        while (cmd < 0 || cmd == maxValue)
+        while (cmd < 0 || cmd > maxValue)
         {
             System.Console.WriteLine("Invalid selection, please make a selection of 1-" + maxValue + " or 0 to logout");
             cmd = int.Parse(Console.ReadLine() ?? "0");

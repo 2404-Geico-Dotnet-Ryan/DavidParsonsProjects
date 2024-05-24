@@ -46,4 +46,18 @@ class UserService
         System.Console.WriteLine("Invalid Username or Password, please try again");
         return null; // reject login
     }
+
+    public User? UpdatePassword(User user, string newPassword)
+    {
+        user.Password = newPassword;
+
+        userRepo.UpdateUser(user);
+
+        return user;
+    }
+
+    public User? DeleteAccount(User user)
+    {
+        return userRepo.DeleteUser(user);
+    }
 }
